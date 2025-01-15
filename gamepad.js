@@ -1,8 +1,9 @@
-let canvas, ctx;
+let gamepadContainer;
+let noGamepadMessage;
 
 function init() {
-    canvas = document.getElementById('gamepadCanvas');
-    ctx = canvas.getContext('2d');
+    gamepadContainer = document.getElementById('gamepadContainer');
+    noGamepadMessage = document.querySelector('.no-gamepad');
     window.addEventListener('gamepadconnected', onGamepadConnected);
     window.addEventListener('gamepaddisconnected', onGamepadDisconnected);
 }
@@ -14,27 +15,54 @@ function onGamepadConnected(event) {
 
 function onGamepadDisconnected(event) {
     console.log('Gamepad disconnected:', event.gamepad);
+    update();
 }
 
 function update() {
     const gamepads = navigator.getGamepads();
     if (!gamepads) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    gamepadContainer.innerHTML = '';
+
+    let gamepadConnected = false;
 
     for (let i = 0; i < gamepads.length; i++) {
         const gp = gamepads[i];
         if (!gp) continue;
 
-        ctx.fillText(`Gamepad ${gp.index}: ${gp.id}`, 10, 30 * (i + 1));
+        gamepadConnected = true;
+
+        const gamepadDiv = document.createElement('div');
+        gamepadDiv.className = 'gamepad-info';
+        gamepadDiv.innerHTML = `<h2>Gamepad ${gp.index}: ${gp.id}</h2>`;
+
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.className = 'buttons-info';
         for (let j = 0; j < gp.buttons.length; j++) {
             const button = gp.buttons[j];
-            ctx.fillText(`Button ${j}: ${button.pressed}`, 10, 30 * (i + 1) + 20 * (j + 1));
+            const buttonInfo = document.createElement('p');
+            buttonInfo.textContent = `Button ${j}: ${button.pressed}`;
+            buttonsDiv.appendChild(buttonInfo);
         }
+        gamepadDiv.appendChild(buttonsDiv);
+
+        const axesDiv = document.createElement('div');
+        axesDiv.className = 'axes-info';
         for (let j = 0; j < gp.axes.length; j++) {
             const axis = gp.axes[j];
-            ctx.fillText(`Axis ${j}: ${axis.toFixed(2)}`, 10, 30 * (i + 1) + 20 * (gp.buttons.length + j + 1));
+            const axisInfo = document.createElement('p');
+            axisInfo.textContent = `Axis ${j}: ${axis.toFixed(2)}`;
+            axesDiv.appendChild(axisInfo);
         }
+        gamepadDiv.appendChild(axesDiv);
+
+        gamepadContainer.appendChild(gamepadDiv);
+    }
+
+    if (!gamepadConnected) {
+        noGamepadMessage.style.display = 'block';
+    } else {
+        noGamepadMessage.style.display = 'none';
     }
 
     requestAnimationFrame(update);
