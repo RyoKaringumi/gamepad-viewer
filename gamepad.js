@@ -22,9 +22,10 @@ function update() {
     const gamepads = navigator.getGamepads();
     if (!gamepads) return;
 
-    gamepadContainer.innerHTML = '';
-
     let gamepadConnected = false;
+
+    // Clear previous gamepad information
+    gamepadContainer.querySelectorAll('.gamepad-info').forEach(info => info.remove());
 
     for (let i = 0; i < gamepads.length; i++) {
         const gp = gamepads[i];
@@ -56,7 +57,17 @@ function update() {
         }
         gamepadDiv.appendChild(axesDiv);
 
+        const stickContainer = document.createElement('div');
+        stickContainer.className = 'stick-container';
+        const stickCanvas = document.createElement('canvas');
+        stickCanvas.width = 300;
+        stickCanvas.height = 300;
+        stickContainer.appendChild(stickCanvas);
+        gamepadDiv.appendChild(stickContainer);
+
         gamepadContainer.appendChild(gamepadDiv);
+
+        updateStickCanvas(stickCanvas, gp.axes);
     }
 
     if (!gamepadConnected) {
@@ -66,6 +77,31 @@ function update() {
     }
 
     requestAnimationFrame(update);
+}
+
+function updateStickCanvas(canvas, axes) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const maxRadius = Math.min(centerX, centerY) - 10;
+
+    // Draw left stick
+    const leftStickX = centerX + axes[0] * maxRadius;
+    const leftStickY = centerY + axes[1] * maxRadius;
+    ctx.beginPath();
+    ctx.arc(leftStickX, leftStickY, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = 'red';
+    ctx.fill();
+
+    // Draw right stick
+    const rightStickX = centerX + axes[2] * maxRadius;
+    const rightStickY = centerY + axes[3] * maxRadius;
+    ctx.beginPath();
+    ctx.arc(rightStickX, rightStickY, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = 'blue';
+    ctx.fill();
 }
 
 window.onload = init;
