@@ -49,42 +49,34 @@ function update() {
 function updateGamepadInfo(index, gp) {
     let gamepadDiv = document.querySelector(`.gamepad-info[data-index="${index}"]`);
     if (!gamepadDiv) {
-        gamepadDiv = document.createElement('div');
-        gamepadDiv.className = 'gamepad-info';
+        const template = document.getElementById('gamepad-template');
+        gamepadDiv = template.content.cloneNode(true).querySelector('.gamepad-info');
         gamepadDiv.setAttribute('data-index', index);
         gamepadContainer.appendChild(gamepadDiv);
     }
 
-    gamepadDiv.innerHTML = `<h2>Gamepad ${gp.index}: ${gp.id}</h2>`;
+    gamepadDiv.querySelector('.gamepad-index').textContent = gp.index;
+    gamepadDiv.querySelector('.gamepad-id').textContent = gp.id;
 
-    const buttonsDiv = document.createElement('div');
-    buttonsDiv.className = 'buttons-info';
+    const buttonsDiv = gamepadDiv.querySelector('.buttons-info');
+    buttonsDiv.innerHTML = '';
     for (let j = 0; j < gp.buttons.length; j++) {
         const button = gp.buttons[j];
         const buttonInfo = document.createElement('p');
         buttonInfo.textContent = `Button ${j}: ${button.pressed}`;
         buttonsDiv.appendChild(buttonInfo);
     }
-    gamepadDiv.appendChild(buttonsDiv);
 
-    const axesDiv = document.createElement('div');
-    axesDiv.className = 'axes-info';
+    const axesDiv = gamepadDiv.querySelector('.axes-info');
+    axesDiv.innerHTML = '';
     for (let j = 0; j < gp.axes.length; j++) {
         const axis = gp.axes[j];
         const axisInfo = document.createElement('p');
         axisInfo.textContent = `Axis ${j}: ${axis.toFixed(2)}`;
         axesDiv.appendChild(axisInfo);
     }
-    gamepadDiv.appendChild(axesDiv);
 
-    const stickContainer = document.createElement('div');
-    stickContainer.className = 'stick-container';
-    const stickCanvas = document.createElement('canvas');
-    stickCanvas.width = 300;
-    stickCanvas.height = 300;
-    stickContainer.appendChild(stickCanvas);
-    gamepadDiv.appendChild(stickContainer);
-
+    const stickCanvas = gamepadDiv.querySelector('.stick-container canvas');
     updateStickCanvas(stickCanvas, gp.axes);
 }
 
