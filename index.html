@@ -12,6 +12,16 @@
         <div id="gamepadContainer">
             <div class="no-gamepad">No gamepad connected</div>
         </div>
+        <template id="gamepad-template">
+            <div class="gamepad-info">
+                <h2>Gamepad <span class="gamepad-index"></span>: <span class="gamepad-id"></span></h2>
+                <div class="buttons-info"></div>
+                <div class="axes-info"></div>
+                <div class="stick-container">
+                    <canvas width="300" height="300"></canvas>
+                </div>
+            </div>
+        </template>
         <script src="gamepad.js"></script>
     </body>
 </html>
