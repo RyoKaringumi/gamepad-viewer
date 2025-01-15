@@ -9,7 +9,10 @@
     <body>
         <h1>Gamepad Viewer</h1>
         <p>This page displays the status of connected gamepads, including button presses and axis movements.</p>
-        <canvas id="gamepadCanvas" width="800" height="600"></canvas>
+        <div id="gamepadContainer">
+            <div class="gamepad-info"></div>
+            <div class="no-gamepad">No gamepad connected</div>
+        </div>
         <script src="gamepad.js"></script>
     </body>
 </html>
